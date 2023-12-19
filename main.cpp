@@ -84,61 +84,60 @@ void loop() {
   if (fbdo.streamAvailable()){
       resultFirebase(fbdo);
   }
-    //==============================//
-    // Clears the trigPin
-    digitalWrite(trigPin, LOW);
-    delayMicroseconds(2);
-    // Sets the trigPin on HIGH state for 10 micro seconds
-    digitalWrite(trigPin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(trigPin, LOW);
-    // Reads the echoPin, returns the sound wave travel time in microseconds
-    duration = pulseIn(echoPin, HIGH);
-    // Calculate the distance
-    distanceCm = duration * SOUND_SPEED/2;
-    // Convert to inches
-    Serial.print("Servo: ");
-    Serial.println(servo1.toInt());
-    Serial.print("Stok: ");
-    Serial.println(stok);
-    //==============================//
-    struct tm timeinfo;
-    if(!getLocalTime(&timeinfo)){
-      Serial.println("Failed to obtain time");
-    }
-    Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
-    Serial.print("Distance (cm): ");
-    Serial.println(distanceCm);
+  // Clears the trigPin
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin on HIGH state for 10 micro seconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration = pulseIn(echoPin, HIGH);
+  // Calculate the distance
+  distanceCm = duration * SOUND_SPEED/2;
+  // Convert to inches
+  Serial.print("Servo: ");
+  Serial.println(servo1.toInt());
+  Serial.print("Stok: ");
+  Serial.println(stok);
 
-    if(!(servo1.toInt()==0) && !(servo==1)){
-      myservo.write(20);
-      Serial.println("Servo Terbuka");
-      servo=1;
-      servo1="0";
-      delay(1000);
-      myservo.write(115);
-      Firebase.RTDB.setString(&fbdo, "test/servo", servo1);
-      
-    }else{
-      myservo.write(115);
-      Serial.println("Servo tertutup");
-      servo=0;
-    }
-    if(distanceCm >= 12 && !(stok==0)){
-      Serial.println("Stok Habis");
-      stok = 0;
-      Firebase.RTDB.setInt(&fbdo, "test/stok", stok);
-    }
-    if(distanceCm > 8 && distanceCm < 12 && !(stok==1)){
-      Serial.println("Stok Sedang");
-      stok = 1;
-      Firebase.RTDB.setInt(&fbdo, "test/stok", stok);
-    }
-    if(distanceCm <7 && !(stok==2)){
-      Serial.println("Stok Full");
-      stok = 2;
-      Firebase.RTDB.setInt(&fbdo, "test/stok", stok);
-    }
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    Serial.println("Failed to obtain time");
+  }
+  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+  Serial.print("Distance (cm): ");
+  Serial.println(distanceCm);
+
+  if(!(servo1.toInt()==0) && !(servo==1)){
+    myservo.write(20);
+    Serial.println("Servo Terbuka");
+    servo=1;
+    servo1="0";
+    delay(1000);
+    myservo.write(115);
+    Firebase.RTDB.setString(&fbdo, "test/servo", servo1);
+    
+  }else{
+    myservo.write(115);
+    Serial.println("Servo tertutup");
+    servo=0;
+  }
+  if(distanceCm >= 12 && !(stok==0)){
+    Serial.println("Stok Habis");
+    stok = 0;
+    Firebase.RTDB.setInt(&fbdo, "test/stok", stok);
+  }
+  if(distanceCm > 8 && distanceCm < 12 && !(stok==1)){
+    Serial.println("Stok Sedang");
+    stok = 1;
+    Firebase.RTDB.setInt(&fbdo, "test/stok", stok);
+  }
+  if(distanceCm <7 && !(stok==2)){
+    Serial.println("Stok Full");
+    stok = 2;
+    Firebase.RTDB.setInt(&fbdo, "test/stok", stok);
+  }
 }
 
 void resultFirebase(FirebaseData &data){
